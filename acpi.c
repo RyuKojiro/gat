@@ -6,12 +6,13 @@
 #include <err.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <paths.h>
 
 int main(int argc, const char *argv[]) {
 	int fd, error;
 	prop_dictionary_t battery_dict = prop_dictionary_create();
 
-        if ((fd = open("/dev/sysmon", O_RDWR)) == -1)
+        if ((fd = open(_PATH_SYSMON, O_RDONLY)) == -1)
 		err(EXIT_FAILURE, "open");
 	
 	error = prop_dictionary_send_ioctl(battery_dict, fd, ENVSYS_GETDICTIONARY);
