@@ -15,10 +15,12 @@ int main(int argc, const char *argv[]) {
         if ((fd = open(_PATH_SYSMON, O_RDONLY)) == -1)
 		err(EXIT_FAILURE, "open");
 	
-	error = prop_dictionary_send_ioctl(battery_dict, fd, ENVSYS_GETDICTIONARY);
+	error = prop_dictionary_recv_ioctl(fd, ENVSYS_GETDICTIONARY, &battery_dict);
 	close(fd);
 
-	printf("%s\n", prop_dictionary_externalize(battery_dict));
+	char *buf = prop_dictionary_externalize(battery_dict);
+	printf("%s\n", buf);
+	free(buf); 
 	prop_object_release(battery_dict);
 	return EXIT_SUCCESS;
 }
