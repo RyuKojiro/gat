@@ -4,7 +4,7 @@ SRCS=	main.c acpi.c
 PROG=	gat
 PREFIX=	/usr
 
-$(PROG):
+$(PROG): $(SRCS)
 	$(CC) $(CFLAGS) -o $(PROG) $(SRCS) $(LIBS)
 
 clean:
