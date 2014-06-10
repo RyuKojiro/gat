@@ -34,9 +34,22 @@ int main(int argc, const char *argv[]) {
 		prop_object_release(battery_dict);
 		return EXIT_FAILURE;
 	}
-
-	// Get charge info, and figure out the state
 	
+	// Iterate over PLIST dictionaries looking for charge dictionary
+	for(int i = 0; i < prop_array_count(obj); i++) {
+		prop_object_t dict = prop_array_get(obj, i);
+		if(prop_object_type(dict) != PROP_TYPE_DICTIONARY) {
+			warnx("unexpected data");
+			prop_object_release(battery_dict);
+			return EXIT_FAILURE;
+		}
+
+		prop_object_t desc = prop_dictionary_get(dict, PROP_KEY_DESCRIPTION);
+		// Get charge info, and figure out the state, from key-value pairs
+		if() {
+			
+		}
+	}
 
 	char *buf = prop_array_externalize(obj);
 	printf("%s\n", buf);
