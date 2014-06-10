@@ -20,12 +20,14 @@ int main(int argc, const char *argv[]) {
 	const char *mydevname = "acpibat0";
 	prop_dictionary_t battery_dict = prop_dictionary_create();
 
+	// Get the ACPI PLIST
 	if ((fd = open(_PATH_SYSMON, O_RDONLY)) == -1)
 		err(EXIT_FAILURE, "open");
 	
 	error = prop_dictionary_recv_ioctl(fd, ENVSYS_GETDICTIONARY, &battery_dict);
 	close(fd);
 
+	// Find the device in the PLIST
 	prop_object_t obj = prop_dictionary_get(battery_dict, mydevname);
    	if (prop_object_type(obj) != PROP_TYPE_ARRAY) {
    		warnx("unknown device `%s'", mydevname);
@@ -33,6 +35,7 @@ int main(int argc, const char *argv[]) {
 		return EXIT_FAILURE;
 	}
 
+	// Get charge info, and figure out the state
 	
 
 	char *buf = prop_array_externalize(obj);
