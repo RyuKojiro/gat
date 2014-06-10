@@ -2,10 +2,10 @@ Battery Icon states:
 
 battery-full
 battery-good
-battery-caution
 battery-low
+battery-caution
 battery-empty
 battery-full-charging
 battery-good-charging
-battery-caution-charging
 battery-low-charging
+battery-caution-charging

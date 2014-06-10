@@ -56,7 +56,6 @@ int getStatsForDevice(const char *mydevname, struct batteryStats *out) {
 			int64_t current = prop_number_unsigned_integer_value(current_o);
 			int64_t max = prop_number_unsigned_integer_value(max_o);
 		
-			printf("found %lu / %lu\n", current, max);	
 			out->percentage = (current * 100 / max);
 		}
 
