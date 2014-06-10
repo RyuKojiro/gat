@@ -15,7 +15,9 @@
 #define ICON_NAME_LEN		25
 #define TRAY_TEXT_LEN		24
 
-#define TRAY_TEXT_CHARGING		"Charging"
+#define TRAY_TEXT_CHARGING		", Charging"
+
+static const char *mydevname = "acpibat0";
 
 static const char *trayTextForBatteryStatus(const char *devname, struct batteryStats *stats) {
 	char *result = malloc(TRAY_TEXT_LEN);
@@ -50,29 +52,36 @@ static const char *iconNameForBatteryStatus(struct batteryStats *stats) {
 	return result;
 }
 
-int main(int argc, char *argv[]) {
-	gtk_init(&argc, &argv);
-
-	GtkStatusIcon *trayIcon = gtk_status_icon_new();
-
-	const char *devname = "acpibat0";
-
+static gboolean updateTray(GtkStatusIcon *trayIcon) {
 	struct batteryStats stats;
-	int rc = getStatsForDevice(devname, &stats);
+	int rc = getStatsForDevice(mydevname, &stats);
 	
 	if(rc) {
 		printf("getStatsForDevice returned failure\n");
-		return 1;
+		return 0;
 	}
 
 	const char *iconName = iconNameForBatteryStatus(&stats);
-	const char *trayText = trayTextForBatteryStatus(devname, &stats);
+	const char *trayText = trayTextForBatteryStatus(mydevname, &stats);
 	
 	gtk_status_icon_set_from_icon_name(trayIcon, iconName);
 	gtk_status_icon_set_tooltip_text(trayIcon, trayText);
+	
+	free((void *)iconName);
+	free((void *)trayText);
+	
+	g_timeout_add(2000, (GSourceFunc) updateTray, trayIcon);
+}
+
+int main(int argc, char *argv[]) {
+	gtk_init(&argc, &argv);
+	
+	GtkStatusIcon *trayIcon = gtk_status_icon_new();
+	
+	// Only call this once, as it starts a timer loop
+	updateTray(trayIcon);
 	gtk_main();
 
-	free((void *)iconName);
 	return 0;
 }
 
