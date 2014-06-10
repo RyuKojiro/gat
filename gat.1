@@ -1,0 +1,44 @@
+.Dd 6/10/14
+.Dt gat 1
+.Os NetBSD
+.Sh NAME
+.Nm gat
+.Nd GTK+ ACPI Tray Battery Monitor
+.Sh SYNOPSIS
+.Nm
+.Ar devname
+.Sh DESCRIPTION
+.Nm
+is a GTK+ based utility for monitoring battery status from any window manager that has a
+system tray capable of containing GTK+ system tray icons. GTK+-3.0 was chosen because it is
+compatible with most window managers, and already contains all of the necessary icon assets 
+for all of the battery states reflected by gat.
+.Pp
+.Nm
+is intended to be used on machines that do not have apm, as an alternative to other
+(more portable) apm-based solutions.
+It is also worth noting, that because of the nature of ACPI,
+.Nm
+polls the status of the device once every two seconds.
+.Sh EXAMPLES
+Invoke
+.Nm
+with the device name you want it to monitor as the sole argument. For example:
+.Pp
+$
+.Nm
+acpibat0 &
+.Pp
+This will spawn an instance of
+.Nm
+into your system tray with the status of that device displayed.
+If you have more than one battery to monitor, simply invoke a separate instance of
+.Nm
+for each device.
+.Pp
+To quit a running instance of
+.Nm ,
+simply click on the tray icon and select the ``Quit'' menu item.
+.Sh SEE ALSO 
+.Xr envstat 8 , 
+.Xr envsys 4
