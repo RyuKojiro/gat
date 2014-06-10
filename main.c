@@ -16,7 +16,7 @@ int main(int argc, char *argv[]) {
 		return 1;
 	}
 
-	printf("plugged = %d\npercentage = %d\n", stats.pluggedIn, stats.percentage);
+	printf("plugged = %lu\npercentage = %lu\n", stats.pluggedIn, stats.percentage);
 	
 	gtk_status_icon_set_from_icon_name(trayIcon, "battery-full");
 	gtk_main();

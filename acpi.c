@@ -16,6 +16,7 @@
 #define PROP_KEY_CURRENT				"cur-value"
 #define PROP_KEY_DESCRIPTION			"description"
 #define PROP_VALUE_CHARGE_DESCRIPTION	"charge"
+#define PROP_VALUE_CHARGING_DESCRIPTION	"charging"
 
 int getStatsForDevice(const char *mydevname, struct batteryStats *out) {
 	int fd, error;
@@ -46,16 +47,27 @@ int getStatsForDevice(const char *mydevname, struct batteryStats *out) {
 		}
 
 		prop_object_t desc = prop_dictionary_get(dict, PROP_KEY_DESCRIPTION);
+		
+		// Get charge info, and figure out the state, from key-value pairs
 		if(prop_string_equals_cstring(desc, PROP_VALUE_CHARGE_DESCRIPTION))  {
-			// This dictionary is a match
-			// Get charge info, and figure out the state, from key-value pairs
+			prop_object_t current_o = prop_dictionary_get(dict, PROP_KEY_CURRENT);
+			prop_object_t max_o = prop_dictionary_get(dict, PROP_KEY_MAXIMUM);
+		
+			int64_t current = prop_number_unsigned_integer_value(current_o);
+			int64_t max = prop_number_unsigned_integer_value(max_o);
+		
+			printf("found %lu / %lu\n", current, max);	
+			out->percentage = (current * 100 / max);
+		}
+
+		// Get plugged in or not info
+		if(prop_string_equals_cstring(desc, PROP_VALUE_CHARGING_DESCRIPTION))  {
+			prop_object_t charging_o = prop_dictionary_get(dict, PROP_KEY_CURRENT);
+			int64_t charging = prop_number_unsigned_integer_value(charging_o);
 			
+			out->pluggedIn = charging;
 		}
 	}
-
-	char *buf = prop_array_externalize(obj);
-	printf("%s\n", buf);
-	free(buf);
 
 	prop_object_release(battery_dict);
 	return EXIT_SUCCESS;
