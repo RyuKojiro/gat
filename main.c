@@ -17,8 +17,8 @@
 #define ICON_NAME_LEN		25
 #define TRAY_TEXT_LEN		28
 
-#define TRAY_TEXT_CHARGING		", Charging"
-#define TRAY_TEXT_NOTFOUND		"Device not found"
+#define TRAY_TEXT_CHARGING	"Charging"
+#define TRAY_TEXT_NOTFOUND	"Device not found"
 
 static const char *mydevname;
 
@@ -28,6 +28,7 @@ static const char *trayTextForBatteryStatus(const char *devname, struct batteryS
 	snprintf(result + strlen(result), TRAY_TEXT_LEN - strlen(result), "%2lu%%", stats->percentage);
 
 	if(stats->pluggedIn) {
+		strncat(result, ", ", TRAY_TEXT_LEN - strlen(result));
 		strncat(result, TRAY_TEXT_CHARGING, TRAY_TEXT_LEN - strlen(result));
 	}
 
@@ -64,6 +65,8 @@ static gboolean updateTray(GtkStatusIcon *trayIcon) {
 		snprintf(text, TRAY_TEXT_LEN, "%s: %s", mydevname, TRAY_TEXT_NOTFOUND);
 		gtk_status_icon_set_from_icon_name(trayIcon, ICON_NAME_ERROR);
 		gtk_status_icon_set_tooltip_text(trayIcon, text);
+		
+		// This will halt the timer loop, as well
 		return EXIT_FAILURE;
 	}
 
