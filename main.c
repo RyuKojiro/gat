@@ -13,6 +13,21 @@
 #define ICON_NAME_CHARGING	"charging"
 
 #define ICON_NAME_LEN		25
+#define TRAY_TEXT_LEN		24
+
+#define TRAY_TEXT_CHARGING		"Charging"
+
+static const char *trayTextForBatteryStatus(const char *devname, struct batteryStats *stats) {
+	char *result = malloc(TRAY_TEXT_LEN);
+	snprintf(result, TRAY_TEXT_LEN, "%s: ", devname);
+	snprintf(result + strlen(result), TRAY_TEXT_LEN - strlen(result), "%2lu%%", stats->percentage);
+
+	if(stats->pluggedIn) {
+		strncat(result, TRAY_TEXT_CHARGING, TRAY_TEXT_LEN - strlen(result));
+	}
+
+	return result;
+}
 
 static const char *iconNameForBatteryStatus(struct batteryStats *stats) {
 	char *result = malloc(ICON_NAME_LEN);
@@ -40,21 +55,21 @@ int main(int argc, char *argv[]) {
 
 	GtkStatusIcon *trayIcon = gtk_status_icon_new();
 
+	const char *devname = "acpibat0";
+
 	struct batteryStats stats;
-	int rc = getStatsForDevice("acpibat0", &stats);
+	int rc = getStatsForDevice(devname, &stats);
 	
 	if(rc) {
 		printf("getStatsForDevice returned failure\n");
 		return 1;
 	}
 
-	printf("plugged = %lu\npercentage = %lu\n", stats.pluggedIn, stats.percentage);
-
 	const char *iconName = iconNameForBatteryStatus(&stats);
+	const char *trayText = trayTextForBatteryStatus(devname, &stats);
 	
-	printf("%s\n", iconName);
-		
 	gtk_status_icon_set_from_icon_name(trayIcon, iconName);
+	gtk_status_icon_set_tooltip_text(trayIcon, trayText);
 	gtk_main();
 
 	free((void *)iconName);
