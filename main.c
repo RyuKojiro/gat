@@ -2,6 +2,7 @@
 #include <sys/envsys.h>
 #include <stdlib.h>
 #include <string.h>
+#include <err.h>
 
 #include "acpi.h"
 
