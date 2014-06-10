@@ -12,12 +12,15 @@
 #define ICON_NAME_CAUTION	"caution"
 #define ICON_NAME_CHARGING	"charging"
 
+#define ICON_NAME_ERROR		"dialog-error"
+
 #define ICON_NAME_LEN		25
-#define TRAY_TEXT_LEN		24
+#define TRAY_TEXT_LEN		28
 
 #define TRAY_TEXT_CHARGING		", Charging"
+#define TRAY_TEXT_NOTFOUND		"Device not found"
 
-static const char *mydevname = "acpibat0";
+static const char *mydevname;
 
 static const char *trayTextForBatteryStatus(const char *devname, struct batteryStats *stats) {
 	char *result = malloc(TRAY_TEXT_LEN);
@@ -57,8 +60,11 @@ static gboolean updateTray(GtkStatusIcon *trayIcon) {
 	int rc = getStatsForDevice(mydevname, &stats);
 	
 	if(rc) {
-		printf("getStatsForDevice returned failure\n");
-		return 0;
+		char text[TRAY_TEXT_LEN];
+		snprintf(text, TRAY_TEXT_LEN, "%s: %s", mydevname, TRAY_TEXT_NOTFOUND);
+		gtk_status_icon_set_from_icon_name(trayIcon, ICON_NAME_ERROR);
+		gtk_status_icon_set_tooltip_text(trayIcon, text);
+		return EXIT_FAILURE;
 	}
 
 	const char *iconName = iconNameForBatteryStatus(&stats);
@@ -71,18 +77,26 @@ static gboolean updateTray(GtkStatusIcon *trayIcon) {
 	free((void *)trayText);
 	
 	g_timeout_add(2000, (GSourceFunc) updateTray, trayIcon);
+	return EXIT_SUCCESS;
 }
 
 int main(int argc, char *argv[]) {
 	gtk_init(&argc, &argv);
 	
+	if(argc <= 1) {
+		warnx("No device specified");
+		return EXIT_FAILURE;
+	}
+
+	mydevname = argv[argc - 1];
+
 	GtkStatusIcon *trayIcon = gtk_status_icon_new();
 	
 	// Only call this once, as it starts a timer loop
 	updateTray(trayIcon);
 	gtk_main();
 
-	return 0;
+	return EXIT_SUCCESS;
 }
 
 
