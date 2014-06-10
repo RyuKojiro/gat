@@ -13,7 +13,7 @@
 #define ICON_NAME_CAUTION	"caution"
 #define ICON_NAME_CHARGING	"charging"
 
-#define ICON_NAME_ERROR		"dialog-error"
+#define ICON_NAME_ERROR		"battery-missing"
 
 #define ICON_NAME_LEN		25
 #define TRAY_TEXT_LEN		28
@@ -53,7 +53,7 @@ static const char *iconNameForBatteryStatus(struct batteryStats *stats) {
 		strncat(result, "-", 1);
 		strncat(result, ICON_NAME_CHARGING, ICON_NAME_LEN - strlen(result));
 	}
-
+	
 	return result;
 }
 
@@ -84,6 +84,18 @@ static gboolean updateTray(GtkStatusIcon *trayIcon) {
 	return EXIT_SUCCESS;
 }
 
+static gboolean trayIconClicked(GtkStatusIcon *status_icon, GdkEvent *event, gpointer user_data) {
+	// Create the contextual menu (which for now only allows quitting)
+	GtkWidget *menu = gtk_menu_new();
+
+	GtkWidget *quitItem = gtk_menu_item_new_with_mnemonic("_Quit");
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), quitItem);
+	gtk_widget_show_all(menu);
+	gtk_menu_popup(GTK_MENU(menu), NULL, NULL, gtk_status_icon_position_menu, status_icon, ((GdkEventButton *)event)->button, ((GdkEventButton*)event)->time);
+
+	return TRUE;
+}
+
 int main(int argc, char *argv[]) {
 	gtk_init(&argc, &argv);
 	
@@ -96,6 +108,8 @@ int main(int argc, char *argv[]) {
 
 	GtkStatusIcon *trayIcon = gtk_status_icon_new();
 	
+	g_signal_connect(trayIcon, "button-release-event", G_CALLBACK(trayIconClicked), NULL);
+
 	// Only call this once, as it starts a timer loop
 	updateTray(trayIcon);
 	gtk_main();
