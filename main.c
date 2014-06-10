@@ -88,7 +88,9 @@ static gboolean trayIconClicked(GtkStatusIcon *status_icon, GdkEvent *event, gpo
 	// Create the contextual menu (which for now only allows quitting)
 	GtkWidget *menu = gtk_menu_new();
 
-	GtkWidget *quitItem = gtk_menu_item_new_with_mnemonic("_Quit");
+	GtkWidget *quitItem = gtk_menu_item_new_with_label("Quit");
+	g_signal_connect(quitItem, "activate", G_CALLBACK(gtk_main_quit), NULL);
+
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), quitItem);
 	gtk_widget_show_all(menu);
 	gtk_menu_popup(GTK_MENU(menu), NULL, NULL, gtk_status_icon_position_menu, status_icon, ((GdkEventButton *)event)->button, ((GdkEventButton*)event)->time);
@@ -103,11 +105,11 @@ int main(int argc, char *argv[]) {
 		warnx("No device specified");
 		return EXIT_FAILURE;
 	}
-
+	
+	// Use the last argument as the device name
 	mydevname = argv[argc - 1];
 
 	GtkStatusIcon *trayIcon = gtk_status_icon_new();
-	
 	g_signal_connect(trayIcon, "button-release-event", G_CALLBACK(trayIconClicked), NULL);
 
 	// Only call this once, as it starts a timer loop
