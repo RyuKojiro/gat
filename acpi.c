@@ -17,7 +17,7 @@
 #define PROP_KEY_DESCRIPTION			"description"
 #define PROP_VALUE_CHARGE_DESCRIPTION	"charge"
 
-struct batteryStats getStatsForDevice(const char *mydevname) {
+int getStatsForDevice(const char *mydevname, struct batteryStats *out) {
 	int fd, error;
 	prop_dictionary_t battery_dict = prop_dictionary_create();
 
