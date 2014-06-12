@@ -17,9 +17,14 @@ for all of the battery states reflected by gat.
 .Nm
 is intended to be used on machines that do not have apm, as an alternative to other
 (more portable) apm-based solutions.
-It is also worth noting, that because of the nature of ACPI,
+.Pp
+It is also worth noting, that due to the nature of ACPI,
 .Nm
-polls the status of the device once every two seconds.
+must poll the status of the device, and does so once every two seconds. Charging status is
+also unrelated to external power sources, but is instead only an indication of charging
+versus discharging. Because of this, the tray icon may indicate that a battery is full, and
+not charging, while plugged in. This is normal, and merely indicates that no positive
+charging of the battery is happening.
 .Sh EXAMPLES
 Invoke
 .Nm
@@ -42,3 +47,6 @@ simply click on the tray icon and select the ``Quit'' menu item.
 .Sh SEE ALSO 
 .Xr envstat 8 , 
 .Xr envsys 4
+.Sh AUTHORS
+.Nm
+was written by Daniel Loffgren. 
