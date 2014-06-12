@@ -21,7 +21,7 @@
 #define TRAY_TEXT_CHARGING	"Charging"
 #define TRAY_TEXT_NOTFOUND	"Device not found"
 
-#define REFRESH_INTERVAL	2000 /* miliseconds */
+#define REFRESH_INTERVAL	2000 /* milliseconds */
 
 static const char *mydevname;
 
