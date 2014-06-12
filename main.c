@@ -1,5 +1,4 @@
 #include <gtk/gtk.h>
-#include <sys/envsys.h>
 #include <stdlib.h>
 #include <string.h>
 #include <err.h>
