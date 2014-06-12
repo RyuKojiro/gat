@@ -21,6 +21,8 @@
 #define TRAY_TEXT_CHARGING	"Charging"
 #define TRAY_TEXT_NOTFOUND	"Device not found"
 
+#define REFRESH_INTERVAL	2000 /* miliseconds */
+
 static const char *mydevname;
 
 static const char *trayTextForBatteryStatus(const char *devname, struct batteryStats *stats) {
@@ -67,7 +69,7 @@ static gboolean updateTray(GtkStatusIcon *trayIcon) {
 		gtk_status_icon_set_from_icon_name(trayIcon, ICON_NAME_ERROR);
 		gtk_status_icon_set_tooltip_text(trayIcon, text);
 		
-		// This will halt the timer loop, as well
+		/* This will halt the timer loop, as well */
 		return EXIT_FAILURE;
 	}
 
@@ -80,21 +82,23 @@ static gboolean updateTray(GtkStatusIcon *trayIcon) {
 	free((void *)iconName);
 	free((void *)trayText);
 	
-	g_timeout_add(2000, (GSourceFunc) updateTray, trayIcon);
+	g_timeout_add(REFRESH_RATE_MS, (GSourceFunc) updateTray, trayIcon);
 	return EXIT_SUCCESS;
 }
 
 static gboolean trayIconClicked(GtkStatusIcon *status_icon, GdkEvent *event, gpointer user_data) {
-	// Create the contextual menu (which for now only allows quitting)
+	/* Create the contextual menu (which for now only allows quitting) */
 	GtkWidget *menu = gtk_menu_new();
 
 	GtkWidget *quitItem = gtk_menu_item_new_with_label("Quit");
 	g_signal_connect(quitItem, "activate", G_CALLBACK(gtk_main_quit), NULL);
-
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), quitItem);
+	g_object_unref(G_OBJECT(quitItem));
+	
 	gtk_widget_show_all(menu);
 	gtk_menu_popup(GTK_MENU(menu), NULL, NULL, gtk_status_icon_position_menu, status_icon, ((GdkEventButton *)event)->button, ((GdkEventButton*)event)->time);
-
+	g_object_unref(G_OBJECT(menu));
+	
 	return TRUE;
 }
 
@@ -106,16 +110,18 @@ int main(int argc, char *argv[]) {
 		return EXIT_FAILURE;
 	}
 	
-	// Use the last argument as the device name
+	/* Use the last argument as the device name */
 	mydevname = argv[argc - 1];
 
 	GtkStatusIcon *trayIcon = gtk_status_icon_new();
 	g_signal_connect(trayIcon, "button-release-event", G_CALLBACK(trayIconClicked), NULL);
 
-	// Only call this once, as it starts a timer loop
+	/* Only call this once, as it starts a timer loop */
 	updateTray(trayIcon);
 	gtk_main();
-
+	
+	g_object_unref(G_OBJECT(trayIcon));
+	
 	return EXIT_SUCCESS;
 }
 
