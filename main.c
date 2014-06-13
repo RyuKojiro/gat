@@ -43,9 +43,9 @@ static const char *iconNameForBatteryStatus(struct batteryStats *stats) {
 
 	if(stats->percentage > 90)
 		strncat(result, ICON_NAME_FULL, ICON_NAME_LEN - strlen(result));
-	else if(stats->percentage > 70)
+	else if(stats->percentage > 60)
 		strncat(result, ICON_NAME_GOOD, ICON_NAME_LEN - strlen(result));
-	else if(stats->percentage > 40)
+	else if(stats->percentage > 30)
 		strncat(result, ICON_NAME_LOW, ICON_NAME_LEN - strlen(result));
 	else
 		strncat(result, ICON_NAME_CAUTION, ICON_NAME_LEN - strlen(result));
@@ -81,7 +81,7 @@ static gboolean updateTray(GtkStatusIcon *trayIcon) {
 	free((void *)iconName);
 	free((void *)trayText);
 	
-	g_timeout_add(REFRESH_RATE_MS, (GSourceFunc) updateTray, trayIcon);
+	g_timeout_add(REFRESH_INTERVAL, (GSourceFunc) updateTray, trayIcon);
 	return EXIT_SUCCESS;
 }
 
