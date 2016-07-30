@@ -27,9 +27,12 @@ int getStatsForDevice(const char *mydevname, struct batteryStats *out) {
 	/* Get the ACPI PLIST */
 	if ((fd = open(_PATH_SYSMON, O_RDONLY)) == -1)
 		err(EXIT_FAILURE, "open");
-	
+
 	error = prop_dictionary_recv_ioctl(fd, ENVSYS_GETDICTIONARY, &battery_dict);
 	close(fd);
+
+	if (error)
+		err(EXIT_FAILURE, "prop_dictionary_recv_ioctl");
 
 	/* Find the device in the PLIST */
 	prop_object_t obj = prop_dictionary_get(battery_dict, mydevname);
