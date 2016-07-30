@@ -20,6 +20,10 @@
 #define TRAY_TEXT_CHARGING	"Charging"
 #define TRAY_TEXT_NOTFOUND	"Device not found"
 
+#define BATTERY_THRESHOLD_FULL	90 /* percent */
+#define BATTERY_THRESHOLD_GOOD	60
+#define BATTERY_THRESHOLD_LOW	30
+
 #define REFRESH_INTERVAL	2000 /* milliseconds */
 
 static const char *mydevname;
@@ -41,11 +45,11 @@ static const char *iconNameForBatteryStatus(struct batteryStats *stats) {
 	char *result = malloc(ICON_NAME_LEN);
 	snprintf(result, ICON_NAME_LEN, "%s-", ICON_NAME_PREFIX);
 
-	if(stats->percentage > 90)
+	if(stats->percentage > BATTERY_THRESHOLD_FULL)
 		strncat(result, ICON_NAME_FULL, ICON_NAME_LEN - strlen(result));
-	else if(stats->percentage > 60)
+	else if(stats->percentage > BATTERY_THRESHOLD_GOOD)
 		strncat(result, ICON_NAME_GOOD, ICON_NAME_LEN - strlen(result));
-	else if(stats->percentage > 30)
+	else if(stats->percentage > BATTERY_THRESHOLD_LOW)
 		strncat(result, ICON_NAME_LOW, ICON_NAME_LEN - strlen(result));
 	else
 		strncat(result, ICON_NAME_CAUTION, ICON_NAME_LEN - strlen(result));
