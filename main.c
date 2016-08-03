@@ -138,19 +138,27 @@ int main(int argc, char *argv[]) {
 		return EXIT_FAILURE;
 	}
 	
-	/* Use the last argument as the device name */
-	TrayItem *item = malloc(sizeof(TrayItem));
-	item->devName = argv[argc - 1];
-	item->trayIcon = gtk_status_icon_new();
+	TrayItem **pool = calloc(argc - 1, sizeof(TrayItem));
+	for (int i = 1; i < argc; i++) {
+		/* Use the last argument as the device name */
+		TrayItem *item = malloc(sizeof(TrayItem));
+		item->devName = argv[i];
+		item->trayIcon = gtk_status_icon_new();
 
-	g_signal_connect(item->trayIcon, "button-release-event", G_CALLBACK(trayIconClicked), item);
+		g_signal_connect(item->trayIcon, "button-release-event", G_CALLBACK(trayIconClicked), item);
+
+		updateTray(item);
+		pool[i - 1] = item;
+	}
 
 	/* Only call this once, as it starts a timer loop */
-	updateTray(item);
 	gtk_main();
 	
-	g_object_ref_sink(G_OBJECT(item->trayIcon));
-	
+	for (int i = 1; i < argc - 1; i++) {
+		g_object_ref_sink(G_OBJECT(pool[i]->trayIcon));
+	}
+	free(pool);
+
 	return EXIT_SUCCESS;
 }
 
