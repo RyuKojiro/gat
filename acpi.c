@@ -65,7 +65,7 @@ int getStatsForDevice(const char *mydevname, struct batteryStats *out) {
 	}
 	
 	/* Iterate over PLIST dictionaries looking for charge dictionary */
-	for(int i = 0; i < prop_array_count(obj); i++) {
+	for(unsigned int i = 0; i < prop_array_count(obj); i++) {
 		prop_object_t dict = prop_array_get(obj, i);
 		if(prop_object_type(dict) != PROP_TYPE_DICTIONARY) {
 			warnx(ERR_TEXT_BAD_PLIST);
@@ -86,8 +86,8 @@ int getStatsForDevice(const char *mydevname, struct batteryStats *out) {
 				return EXIT_FAILURE;
 			}
 
-			int64_t current = prop_number_unsigned_integer_value(current_o);
-			int64_t max = prop_number_unsigned_integer_value(max_o);
+			uint64_t current = prop_number_unsigned_integer_value(current_o);
+			uint64_t max = prop_number_unsigned_integer_value(max_o);
 			
 			out->percentage = (current * 100 / max);
 		}
