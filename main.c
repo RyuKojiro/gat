@@ -115,6 +115,8 @@ static gboolean updateTray(TrayItem *item) {
 }
 
 static gboolean trayIconClicked(GtkStatusIcon *status_icon, GdkEvent *event, gpointer user_data) {
+	(void)user_data;
+
 	/* Create the contextual menu (which for now only allows quitting) */
 	GtkWidget *menu = gtk_menu_new();
 
