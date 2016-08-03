@@ -33,10 +33,9 @@
 #define ICON_NAME_LOW		"low"
 #define ICON_NAME_CAUTION	"caution"
 #define ICON_NAME_CHARGING	"charging"
+#define ICON_NAME_ERROR		"missing"
+#define ICON_NAME_SEPARATOR	"-"
 
-#define ICON_NAME_ERROR		"battery-missing"
-
-#define ICON_NAME_LEN		25
 #define TRAY_TEXT_LEN		28
 
 #define TRAY_TEXT_CHARGING	"Charging"
@@ -67,24 +66,26 @@ static const char *trayTextForBatteryStatus(const char *devname, struct batteryS
 }
 
 static const char *iconNameForBatteryStatus(struct batteryStats *stats) {
-	char *result = malloc(ICON_NAME_LEN);
-	snprintf(result, ICON_NAME_LEN, "%s-", ICON_NAME_PREFIX);
-
-	if(stats->percentage > BATTERY_THRESHOLD_FULL)
-		strncat(result, ICON_NAME_FULL, ICON_NAME_LEN - strlen(result));
-	else if(stats->percentage > BATTERY_THRESHOLD_GOOD)
-		strncat(result, ICON_NAME_GOOD, ICON_NAME_LEN - strlen(result));
-	else if(stats->percentage > BATTERY_THRESHOLD_LOW)
-		strncat(result, ICON_NAME_LOW, ICON_NAME_LEN - strlen(result));
-	else
-		strncat(result, ICON_NAME_CAUTION, ICON_NAME_LEN - strlen(result));
-
 	if(stats->pluggedIn) {
-		strncat(result, "-", 1);
-		strncat(result, ICON_NAME_CHARGING, ICON_NAME_LEN - strlen(result));
+		if(stats->percentage > BATTERY_THRESHOLD_FULL)
+			return ICON_NAME_PREFIX ICON_NAME_SEPARATOR ICON_NAME_FULL ICON_NAME_SEPARATOR ICON_NAME_CHARGING;
+		else if(stats->percentage > BATTERY_THRESHOLD_GOOD)
+			return ICON_NAME_PREFIX ICON_NAME_SEPARATOR ICON_NAME_GOOD ICON_NAME_SEPARATOR ICON_NAME_CHARGING;
+		else if(stats->percentage > BATTERY_THRESHOLD_LOW)
+			return ICON_NAME_PREFIX ICON_NAME_SEPARATOR ICON_NAME_LOW ICON_NAME_SEPARATOR ICON_NAME_CHARGING;
+		else
+			return ICON_NAME_PREFIX ICON_NAME_SEPARATOR ICON_NAME_CAUTION ICON_NAME_SEPARATOR ICON_NAME_CHARGING;
 	}
-	
-	return result;
+	else {
+		if(stats->percentage > BATTERY_THRESHOLD_FULL)
+			return ICON_NAME_PREFIX ICON_NAME_SEPARATOR ICON_NAME_FULL;
+		else if(stats->percentage > BATTERY_THRESHOLD_GOOD)
+			return ICON_NAME_PREFIX ICON_NAME_SEPARATOR ICON_NAME_GOOD;
+		else if(stats->percentage > BATTERY_THRESHOLD_LOW)
+			return ICON_NAME_PREFIX ICON_NAME_SEPARATOR ICON_NAME_LOW;
+		else
+			return ICON_NAME_PREFIX ICON_NAME_SEPARATOR ICON_NAME_CAUTION;
+	}
 }
 
 static gboolean updateTray(TrayItem *item) {
@@ -94,7 +95,7 @@ static gboolean updateTray(TrayItem *item) {
 	if(rc) {
 		char text[TRAY_TEXT_LEN];
 		snprintf(text, TRAY_TEXT_LEN, "%s: %s", item->devName, TRAY_TEXT_NOTFOUND);
-		gtk_status_icon_set_from_icon_name(item->trayIcon, ICON_NAME_ERROR);
+		gtk_status_icon_set_from_icon_name(item->trayIcon, ICON_NAME_PREFIX ICON_NAME_SEPARATOR ICON_NAME_ERROR);
 		gtk_status_icon_set_tooltip_text(item->trayIcon, text);
 		
 		/* This will halt the timer loop, as well */
@@ -106,9 +107,6 @@ static gboolean updateTray(TrayItem *item) {
 	
 	gtk_status_icon_set_from_icon_name(item->trayIcon, iconName);
 	gtk_status_icon_set_tooltip_text(item->trayIcon, trayText);
-	
-	free((void *)iconName);
-	free((void *)trayText);
 	
 	g_timeout_add(REFRESH_INTERVAL, (GSourceFunc) updateTray, item);
 	return EXIT_SUCCESS;
