@@ -26,7 +26,10 @@
 
 #define REFRESH_INTERVAL	2000 /* milliseconds */
 
-static const char *mydevname;
+typedef struct {
+	const char *devName;
+	GtkStatusIcon *trayIcon;
+} TrayItem;
 
 static const char *trayTextForBatteryStatus(const char *devname, struct batteryStats *stats) {
 	char *result = malloc(TRAY_TEXT_LEN);
@@ -62,30 +65,30 @@ static const char *iconNameForBatteryStatus(struct batteryStats *stats) {
 	return result;
 }
 
-static gboolean updateTray(GtkStatusIcon *trayIcon) {
+static gboolean updateTray(TrayItem *item) {
 	struct batteryStats stats;
-	int rc = getStatsForDevice(mydevname, &stats);
+	int rc = getStatsForDevice(item->devName, &stats);
 	
 	if(rc) {
 		char text[TRAY_TEXT_LEN];
-		snprintf(text, TRAY_TEXT_LEN, "%s: %s", mydevname, TRAY_TEXT_NOTFOUND);
-		gtk_status_icon_set_from_icon_name(trayIcon, ICON_NAME_ERROR);
-		gtk_status_icon_set_tooltip_text(trayIcon, text);
+		snprintf(text, TRAY_TEXT_LEN, "%s: %s", item->devName, TRAY_TEXT_NOTFOUND);
+		gtk_status_icon_set_from_icon_name(item->trayIcon, ICON_NAME_ERROR);
+		gtk_status_icon_set_tooltip_text(item->trayIcon, text);
 		
 		/* This will halt the timer loop, as well */
 		return EXIT_FAILURE;
 	}
 
 	const char *iconName = iconNameForBatteryStatus(&stats);
-	const char *trayText = trayTextForBatteryStatus(mydevname, &stats);
+	const char *trayText = trayTextForBatteryStatus(item->devName, &stats);
 	
-	gtk_status_icon_set_from_icon_name(trayIcon, iconName);
-	gtk_status_icon_set_tooltip_text(trayIcon, trayText);
+	gtk_status_icon_set_from_icon_name(item->trayIcon, iconName);
+	gtk_status_icon_set_tooltip_text(item->trayIcon, trayText);
 	
 	free((void *)iconName);
 	free((void *)trayText);
 	
-	g_timeout_add(REFRESH_INTERVAL, (GSourceFunc) updateTray, trayIcon);
+	g_timeout_add(REFRESH_INTERVAL, (GSourceFunc) updateTray, item);
 	return EXIT_SUCCESS;
 }
 
@@ -114,16 +117,17 @@ int main(int argc, char *argv[]) {
 	}
 	
 	/* Use the last argument as the device name */
-	mydevname = argv[argc - 1];
+	TrayItem *item = malloc(sizeof(TrayItem));
+	item->devName = argv[argc - 1];
+	item->trayIcon = gtk_status_icon_new();
 
-	GtkStatusIcon *trayIcon = gtk_status_icon_new();
-	g_signal_connect(trayIcon, "button-release-event", G_CALLBACK(trayIconClicked), NULL);
+	g_signal_connect(item->trayIcon, "button-release-event", G_CALLBACK(trayIconClicked), item);
 
 	/* Only call this once, as it starts a timer loop */
-	updateTray(trayIcon);
+	updateTray(item);
 	gtk_main();
 	
-	g_object_ref_sink(G_OBJECT(trayIcon));
+	g_object_ref_sink(G_OBJECT(item->trayIcon));
 	
 	return EXIT_SUCCESS;
 }
