@@ -140,7 +140,7 @@ int main(int argc, char *argv[]) {
 		return EXIT_FAILURE;
 	}
 	
-	TrayItem **pool = calloc(argc - 1, sizeof(TrayItem));
+	TrayItem **pool = calloc((size_t)argc - 1, sizeof(TrayItem));
 	for (int i = 1; i < argc; i++) {
 		/* Use the last argument as the device name */
 		TrayItem *item = malloc(sizeof(TrayItem));
