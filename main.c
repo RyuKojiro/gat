@@ -147,7 +147,11 @@ static gboolean trayIconClicked(GtkStatusIcon *status_icon, GdkEvent *event, gpo
 	g_object_ref_sink(G_OBJECT(quitItem));
 	
 	gtk_widget_show_all(menu);
-	gtk_menu_popup(GTK_MENU(menu), NULL, NULL, gtk_status_icon_position_menu, status_icon, ((GdkEventButton *)event)->button, ((GdkEventButton*)event)->time);
+	gtk_menu_popup(GTK_MENU(menu), NULL, NULL,
+	               gtk_status_icon_position_menu,
+	               status_icon,
+	               ((GdkEventButton *)event)->button,
+	               ((GdkEventButton *)event)->time);
 	g_object_ref_sink(G_OBJECT(menu));
 	
 	return TRUE;
