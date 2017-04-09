@@ -89,25 +89,26 @@ static const char *iconNameForBatteryStatus(struct batteryStats *stats) {
 static gboolean updateTray(TrayItem *item) {
 	struct batteryStats stats;
 	int rc = getStatsForDevice(item->devName, &stats);
-	
-	if(rc) {
+
+	if(rc == EXIT_SUCCESS) {
+		const char *iconName = iconNameForBatteryStatus(&stats);
+		const char *trayText = trayTextForBatteryStatus(item->devName, &stats);
+
+		gtk_status_icon_set_from_icon_name(item->trayIcon, iconName);
+		gtk_status_icon_set_tooltip_text(item->trayIcon, trayText);
+
+		g_timeout_add(REFRESH_INTERVAL, (GSourceFunc) updateTray, item);
+	}
+	else {
 		char text[TRAY_TEXT_LEN];
 		snprintf(text, TRAY_TEXT_LEN, "%s: %s", item->devName, TRAY_TEXT_NOTFOUND);
-		gtk_status_icon_set_from_icon_name(item->trayIcon, ICON_NAME_PREFIX ICON_NAME_SEPARATOR ICON_NAME_ERROR);
+		gtk_status_icon_set_from_icon_name(item->trayIcon, ICON_NAME_PREFIX
+		                                                   ICON_NAME_SEPARATOR
+		                                                   ICON_NAME_ERROR);
 		gtk_status_icon_set_tooltip_text(item->trayIcon, text);
-		
-		/* This will halt the timer loop, as well */
-		return EXIT_FAILURE;
 	}
-
-	const char *iconName = iconNameForBatteryStatus(&stats);
-	const char *trayText = trayTextForBatteryStatus(item->devName, &stats);
-	
-	gtk_status_icon_set_from_icon_name(item->trayIcon, iconName);
-	gtk_status_icon_set_tooltip_text(item->trayIcon, trayText);
-	
-	g_timeout_add(REFRESH_INTERVAL, (GSourceFunc) updateTray, item);
-	return EXIT_SUCCESS;
+	/* This function returning EXIT_FAILURE will halt the timer loop, as well */
+	return rc;
 }
 
 static gboolean trayIconClicked(GtkStatusIcon *status_icon, GdkEvent *event, gpointer user_data) {
