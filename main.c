@@ -177,6 +177,7 @@ int main(int argc, char *argv[]) {
 	/* Only call this once, as it starts a timer loop */
 	gtk_main();
 	
+	/* Clean up on the way out */
 	for (int i = 1; i < argc - 1; i++)
 		g_object_ref_sink(G_OBJECT(pool[i]->trayIcon));
 
