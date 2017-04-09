@@ -27,25 +27,25 @@
 
 #include "acpi.h"
 
-#define ICON_NAME_PREFIX	"battery"
-#define ICON_NAME_FULL		"full"
-#define ICON_NAME_GOOD		"good"
-#define ICON_NAME_LOW		"low"
-#define ICON_NAME_CAUTION	"caution"
-#define ICON_NAME_CHARGING	"charging"
-#define ICON_NAME_ERROR		"missing"
-#define ICON_NAME_SEPARATOR	"-"
+#define ICON_NAME_PREFIX       "battery"
+#define ICON_NAME_FULL         "full"
+#define ICON_NAME_GOOD         "good"
+#define ICON_NAME_LOW          "low"
+#define ICON_NAME_CAUTION      "caution"
+#define ICON_NAME_CHARGING     "charging"
+#define ICON_NAME_ERROR        "missing"
+#define ICON_NAME_SEPARATOR    "-"
 
-#define TRAY_TEXT_LEN		28
+#define TRAY_TEXT_LEN          28
 
-#define TRAY_TEXT_CHARGING	"Charging"
-#define TRAY_TEXT_NOTFOUND	"Device not found"
+#define TRAY_TEXT_CHARGING     "Charging"
+#define TRAY_TEXT_NOTFOUND     "Device not found"
 
-#define BATTERY_THRESHOLD_FULL	90 /* percent */
-#define BATTERY_THRESHOLD_GOOD	60
-#define BATTERY_THRESHOLD_LOW	30
+#define BATTERY_THRESHOLD_FULL 90 /* percent */
+#define BATTERY_THRESHOLD_GOOD 60
+#define BATTERY_THRESHOLD_LOW  30
 
-#define REFRESH_INTERVAL	2000 /* milliseconds */
+#define REFRESH_INTERVAL       2000 /* milliseconds */
 
 typedef struct {
 	const char *devName;
