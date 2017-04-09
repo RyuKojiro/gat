@@ -32,15 +32,15 @@
 
 #include "acpi.h"
 
-#define PROP_KEY_MAXIMUM				"max-value"
-#define PROP_KEY_CRITICAL				"critical-capacity"
-#define PROP_KEY_WARNING				"warning-capacity"
-#define PROP_KEY_CURRENT				"cur-value"
-#define PROP_KEY_DESCRIPTION			"description"
-#define PROP_VALUE_CHARGE_DESCRIPTION	"charge"
-#define PROP_VALUE_CHARGING_DESCRIPTION	"charging"
+#define PROP_KEY_MAXIMUM                "max-value"
+#define PROP_KEY_CRITICAL               "critical-capacity"
+#define PROP_KEY_WARNING                "warning-capacity"
+#define PROP_KEY_CURRENT                "cur-value"
+#define PROP_KEY_DESCRIPTION            "description"
+#define PROP_VALUE_CHARGE_DESCRIPTION   "charge"
+#define PROP_VALUE_CHARGING_DESCRIPTION "charging"
 
-#define ERR_TEXT_BAD_PLIST				"Unexpected property list data"
+#define ERR_TEXT_BAD_PLIST              "Unexpected property list data"
 
 int getStatsForDevice(const char *mydevname, struct batteryStats *out) {
 	int fd, error;
