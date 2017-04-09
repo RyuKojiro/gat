@@ -80,7 +80,8 @@ int getStatsForDevice(const char *mydevname, struct batteryStats *out) {
 			prop_object_t current_o = prop_dictionary_get(dict, PROP_KEY_CURRENT);
 			prop_object_t max_o = prop_dictionary_get(dict, PROP_KEY_MAXIMUM);
 		
-			if(prop_object_type(current_o) != PROP_TYPE_NUMBER || prop_object_type(max_o) != PROP_TYPE_NUMBER) {
+			if(prop_object_type(current_o) != PROP_TYPE_NUMBER ||
+			   prop_object_type(max_o) != PROP_TYPE_NUMBER) {
 				warnx(ERR_TEXT_BAD_PLIST);
 				prop_object_release(battery_dict);
 				return EXIT_FAILURE;
