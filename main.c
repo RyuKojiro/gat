@@ -57,8 +57,7 @@ static const char *trayTextForBatteryStatus(const char *devname, struct batteryS
 	snprintf(result, TRAY_TEXT_LEN, "%s: %2lu%%", devname, stats->percentage);
 
 	if(stats->pluggedIn) {
-		strncat(result, ", ", TRAY_TEXT_LEN - strlen(result));
-		strncat(result, TRAY_TEXT_CHARGING, TRAY_TEXT_LEN - strlen(result));
+		strncat(result, ", " TRAY_TEXT_CHARGING, TRAY_TEXT_LEN - strlen(result));
 	}
 
 	return result;
