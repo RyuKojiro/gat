@@ -54,8 +54,7 @@ typedef struct {
 
 static const char *trayTextForBatteryStatus(const char *devname, struct batteryStats *stats) {
 	char *result = malloc(TRAY_TEXT_LEN);
-	snprintf(result, TRAY_TEXT_LEN, "%s: ", devname);
-	snprintf(result + strlen(result), TRAY_TEXT_LEN - strlen(result), "%2lu%%", stats->percentage);
+	snprintf(result, TRAY_TEXT_LEN, "%s: %2lu%%", devname, stats->percentage);
 
 	if(stats->pluggedIn) {
 		strncat(result, ", ", TRAY_TEXT_LEN - strlen(result));
