@@ -4,6 +4,7 @@ SRCS=		main.c acpi.c
 PROG=		gat
 MANPAGE=	gat.1
 PREFIX?=	/usr/local
+DESTDIR?=	/
 
 all: $(PROG)
 
@@ -14,6 +15,6 @@ clean:
 	rm -f $(PROG)
 
 install: $(PROG)
-	install -m 0755 $(PROG) $(PREFIX)/bin
-	install -m 0644 $(MANPAGE) $(PREFIX)/man/man1
+	install -m 0755 $(PROG) $(DESTDIR)/$(PREFIX)/bin
+	install -m 0644 $(MANPAGE) $(DESTDIR)/$(PREFIX)/man/man1
 
