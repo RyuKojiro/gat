@@ -20,6 +20,10 @@
  * IN THE SOFTWARE.
  */
 
+#if !__NetBSD__
+#error "This implementation currently only supports NetBSD's ACPI interface."
+#endif // !__NetBSD__
+
 #include <sys/types.h>
 #include <sys/envsys.h>
 #include <prop/proplib.h>
