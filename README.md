@@ -30,7 +30,7 @@ $ **gat** acpibat0 &
 
 This will spawn an instance of **gat** into your system tray with the status
 of that device displayed.  If you have more than one battery to monitor,
-simply invoke a separate instance of **gat** for each device.
+just invoke **gat** with an argument for each device.
 
 To quit a running instance of **gat**, simply click on the tray icon and
 select the ``Quit'' menu item.
