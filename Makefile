@@ -6,6 +6,8 @@ MANPAGE=	gat.1
 BINPREFIX=	/usr/pkg
 MANPREFIX=	/usr/pkg
 
+all: $(PROG)
+
 $(PROG): $(SRCS)
 	$(CC) $(CFLAGS) -o $(PROG) $(SRCS) $(LIBS)
 
