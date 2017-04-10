@@ -3,8 +3,7 @@ LIBS=		`pkg-config --libs gtk+-3.0` -lprop
 SRCS=		main.c acpi.c
 PROG=		gat
 MANPAGE=	gat.1
-BINPREFIX=	/usr/pkg
-MANPREFIX=	/usr/pkg
+PREFIX?=	/usr/local
 
 all: $(PROG)
 
@@ -15,6 +14,6 @@ clean:
 	rm -f $(PROG)
 
 install: $(PROG)
-	install -m 0755 $(PROG) $(BINPREFIX)/bin
-	install -m 0644 $(MANPAGE) $(MANPREFIX)/man/man1
+	install -m 0755 $(PROG) $(PREFIX)/bin
+	install -m 0644 $(MANPAGE) $(PREFIX)/man/man1
 
